@@ -79,7 +79,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                     height: 40,
                   ),
                   if (totalCalories!>1800)
-                    const Text("Heyyy!! You achieved today's goal", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.deepOrange),),
+                    const Text("Heyyy!! You achieved today's goal", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),),
                     const SizedBox(
                       height: 40,
                     ),
@@ -196,12 +196,12 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                     height: 80,
                   ),
                   const Text(
-                    'Average daily intake for men is 2500 calories',
+                    '"Average daily intake for men is 2500 calories"',
                     style: TextStyle(
                         color: Colors.blue, fontWeight: FontWeight.bold),
                   ),
                   const Text(
-                    'Average daily intake for women is 2000 calories',
+                    '"Average daily intake for women is 2000 calories"',
                     style: TextStyle(
                         color: Colors.blue, fontWeight: FontWeight.bold),
                   ),
@@ -253,7 +253,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
               return Row(
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(9.0),
+                    padding: EdgeInsets.all(11.0),
                     child: SizedBox(
                         height: 50,
                         width: 50,

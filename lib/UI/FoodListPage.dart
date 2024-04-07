@@ -30,11 +30,13 @@ class _FoodListPageState extends State<FoodListPage> {
   String searchText = '';
   List searchList = [];
   List searchIndexList = [];
+  bool bl=false;
 
   @override
   void initState() {
     super.initState();
     readData();
+
   }
 
   Future<void> readData() async {
@@ -43,13 +45,8 @@ class _FoodListPageState extends State<FoodListPage> {
           FirebaseFirestore.instance.collection('Foods');
       QuerySnapshot querySnapshot = await collectionReference.get();
 
-      //Get the total calories
-      // documentReference = FirebaseFirestore.instance.collection('TotalCalories').doc('7NELlvkDVQ6PLMVdbqpg');
-      // DocumentSnapshot<Object?>? documentSnapshot = await documentReference?.get();
-      // data = documentSnapshot?.data() as Map<String, dynamic>?;
-      // savedTotalCalories = data?['totalCalories'];
 
-      //Get the countList
+      // Get the countList
       documentReferenceForCountList = FirebaseFirestore.instance
           .collection('FoodsConsumedToday')
           .doc('XeEl2aYmbHyGfdVsOc9U');
@@ -63,8 +60,15 @@ class _FoodListPageState extends State<FoodListPage> {
       // }
 
       setState(() {
+        isTodayNewDay();
         list = querySnapshot.docs.map((doc) => doc.data()).toList();
-        print(list);
+      // FirebaseFirestore.instance
+      //     .collection(
+      //     'FoodsConsumedToday') // Replace 'your_collection' with your actual collection name
+      //     .doc(
+      //     'XeEl2aYmbHyGfdVsOc9U') // Replace 'your_document_id' with the ID of the document containing the array
+      //     .update({'countList': countList});
+
       });
     } catch (e) {
       print(e);
@@ -155,8 +159,14 @@ class _FoodListPageState extends State<FoodListPage> {
                                       countList[searchIndexList[index]] =
                                           countList[searchIndexList[index]] - 1;
                                     }
-                                  }
-                                });
+                                  }  });
+                                  FirebaseFirestore.instance
+                                      .collection(
+                                      'FoodsConsumedToday') // Replace 'your_collection' with your actual collection name
+                                      .doc(
+                                      'XeEl2aYmbHyGfdVsOc9U') // Replace 'your_document_id' with the ID of the document containing the array
+                                      .update({'countList': countList});
+
                               },
                               child: const Center(
                                 child: Text(
@@ -181,7 +191,7 @@ class _FoodListPageState extends State<FoodListPage> {
                           child: FloatingActionButton(
                               heroTag: 'plus$index',
                               onPressed: () {
-                                setState(() {
+                                setState(()  {
                                   if (searchList.isEmpty) {
                                     countList[index] = countList[index] + 1;
                                   } else {
@@ -189,6 +199,13 @@ class _FoodListPageState extends State<FoodListPage> {
                                         countList[searchIndexList[index]] + 1;
                                   }
                                 });
+                                  FirebaseFirestore.instance
+                                      .collection(
+                                      'FoodsConsumedToday') // Replace 'your_collection' with your actual collection name
+                                      .doc(
+                                      'XeEl2aYmbHyGfdVsOc9U') // Replace 'your_document_id' with the ID of the document containing the array
+                                      .update({'countList': countList});
+
                               },
                               child: const Text(
                                 '+',
@@ -214,21 +231,12 @@ class _FoodListPageState extends State<FoodListPage> {
                 ElevatedButton(
                     onPressed: () async {
                       savedTotalCalories = 0;
-                      await FirebaseFirestore.instance
-                          .collection(
-                              'FoodsConsumedToday') // Replace 'your_collection' with your actual collection name
-                          .doc(
-                              'XeEl2aYmbHyGfdVsOc9U') // Replace 'your_document_id' with the ID of the document containing the array
-                          .update({'countList': countList});
                       bottomSheetList.clear();
-                      if (await isTodayNewDay()) {
-                        savedTotalCalories = 0;
-                        bottomSheetList.clear();
-                      }
-                      print(savedTotalCalories);
+
+
                       for (int i = 0; i < countList.length; i++) {
                         savedTotalCalories = savedTotalCalories +
-                            (countList[i] * (list?[i]['calories']) as int);
+                            (countList[i] * (list[i]['calories']) as int);
 
                         if (countList[i] != 0) {
                           bottomSheetList.add(list[i]);
@@ -238,7 +246,6 @@ class _FoodListPageState extends State<FoodListPage> {
                         "totalCalories": savedTotalCalories
                       };
                       documentReference?.set(map1).whenComplete(() => null);
-                      print(bottomSheetList);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -277,7 +284,7 @@ class _FoodListPageState extends State<FoodListPage> {
     });
   }
 
-  Future<bool> isTodayNewDay() async {
+  Future<void> isTodayNewDay() async {
     DocumentReference docReference = FirebaseFirestore.instance
         .collection('TodayDate')
         .doc('5dB7I6qTFwiEeGuUsW8X');
@@ -300,11 +307,21 @@ class _FoodListPageState extends State<FoodListPage> {
     if (savedDateTime?.year == now.year &&
         savedDateTime?.month == now.month &&
         savedDateTime?.day == now.day) {
-      return false;
     } else {
+      print("else part");
       Map<String, dynamic> map = {"date": now};
       docReference.set(map).whenComplete(() => print(map));
-      return true;
+      setState(() {
+        for (int i = 0; i < countList.length; i++) {
+          countList[i]=0;
+        }
+      });
+      await FirebaseFirestore.instance
+          .collection(
+          'FoodsConsumedToday') // Replace 'your_collection' with your actual collection name
+          .doc(
+          'XeEl2aYmbHyGfdVsOc9U') // Replace 'your_document_id' with the ID of the document containing the array
+          .update({'countList': countList});
     }
   }
 }
