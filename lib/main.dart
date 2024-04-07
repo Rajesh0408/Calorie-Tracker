@@ -1,8 +1,11 @@
 
 
 import 'package:calorie_tracker/UI/FoodListPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'UI/HomePage.dart';
 
 
 
@@ -13,6 +16,25 @@ void main() async{
   );
 
   runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-      home: FoodListPage()));
+            debugShowCheckedModeBanner: false,
+            home: FoodListPage()));
+
+  // if(await isNew()) {
+  //   runApp(MaterialApp(
+  //       debugShowCheckedModeBanner: false,
+  //       home: HomePage()));
+  // } else {
+  //   runApp(MaterialApp(
+  //       debugShowCheckedModeBanner: false,
+  //       home: FoodListPage()));
+  // }
+
+}
+
+Future<bool> isNew() async {
+
+  DocumentReference documentReference = FirebaseFirestore.instance.collection('NewUser').doc('7KFzfVYcmYqqss75dxzn');
+  DocumentSnapshot snapshot = await documentReference.get();
+  bool bl = snapshot.get('isNew');
+  return bl;
 }

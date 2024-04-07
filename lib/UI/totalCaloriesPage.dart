@@ -1,3 +1,9 @@
+
+import 'dart:ffi';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -19,6 +25,9 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
   DateTime time = DateTime.now();
   List? bottomSheetList;
   int? len;
+  int? remainingCalories;
+  ValueNotifier<double> valueNotifierEaten=ValueNotifier<double>(0.0);
+  ValueNotifier<double> valueNotifierRemaining=ValueNotifier<double>(0.0);
 
   @override
   void initState() {
@@ -26,11 +35,27 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
     totalCalories = widget.totalCalories;
     bottomSheetList=widget.bottomSheetList;
     len = bottomSheetList?.length;
+    changeEatenProgressValue(totalCalories!);
+    changeRemainingProgressValue(totalCalories!);
     print(time);
+  }
+
+  void changeEatenProgressValue(int totalCalories) {
+    valueNotifierEaten.value = (totalCalories/1800)*100;
+  }
+
+  void changeRemainingProgressValue(int totalCalories) {
+    remainingCalories =1800-totalCalories;
+    if(remainingCalories!<0) {
+      remainingCalories=0;
+    }
+    valueNotifierRemaining.value = (remainingCalories!/1800)*100;
   }
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appbar,
@@ -50,27 +75,88 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
               ),
               child: Column(
                 children: [
-                  SizedBox(height: 30,),
-                  Center(
+                  const SizedBox(height: 30,),
+                  const Center(
                       child: Text(
                     'TOTAL CALORIES \n  INTAKE TODAY',
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   )),
-                  SizedBox(height: 140,),
+                  const SizedBox(height: 100,),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(
-                        '$totalCalories',
-                        style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                      Column(
+                        children: [
+                          SimpleCircularProgressBar(
+                            valueNotifier: valueNotifierEaten,
+                            mergeMode: true,
+                            onGetText: (double value) {
+                              return Text(
+                                '${value.toInt()}%',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '$totalCalories',
+                                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.green),
+                              ),
+                              const Text(
+                                ' cal',
+                                style: TextStyle(fontSize: 25, color: Colors.green),
+                              ),
+                            ],
+                          ),
+                          Text('Eaten',style: TextStyle(fontSize: 20, color: Colors.green),),
+
+                        ],
                       ),
-                      Text(
-                        ' cal',
-                        style: TextStyle(fontSize: 25),
+                      Column(
+                        children: [
+                          SimpleCircularProgressBar(
+                            valueNotifier: valueNotifierRemaining,
+                            mergeMode: true,
+                            onGetText: (double value) {
+                              return Text(
+                                '${value.toInt()}%',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '$remainingCalories ',
+                                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.red),
+                              ),
+                              const Text(
+                                ' cal',
+                                style: TextStyle(fontSize: 25, color: Colors.red),
+                              ),
+                            ],
+                          ),
+                          Text('Remaining',style: TextStyle(fontSize: 20, color: Colors.red),),
+
+                        ],
                       ),
                     ],
                   ),
-                  SizedBox(height: 120,),
+
+                  SizedBox(height: 30,),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Text(totalCalories! > 1800 && totalCalories! < 2800
@@ -79,25 +165,24 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                             ? "Very Low Calories. Please take more calories"
                             : "That's a lot of calories and very unhealthy for you", style: TextStyle(fontSize: 20, color: totalCalories! < 1800 || totalCalories! > 2800?Colors.red : Colors.green ),),
                   ),
-                  SizedBox(height:50,),
-                  const Text('Average daily intake for men is 2500 calories', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),),
-                  const Text('Average daily intake for women is 2000 calories', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),),
-                  SizedBox(height: 30,),
+                  const SizedBox(height:50,),
+                  const Text('Average daily intake for men is 2500 calories', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),),
+                  const Text('Average daily intake for women is 2000 calories', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),),
+                  const SizedBox(height: 30,),
 
                 ],
               ),
             ),
-            SizedBox(height: 30,),
+            const SizedBox(height: 30,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
-                  style: ButtonStyle(
+                  style: const ButtonStyle(
                     padding:MaterialStatePropertyAll(EdgeInsets.only(left: 30, right: 30, top: 15,bottom: 15)),
                   ),
                     onPressed: () {
                       Navigator.pop(context);
-                      print(time);
                     }, child: const Text('Recalculate')),
                 ElevatedButton(
                     style: ButtonStyle(
