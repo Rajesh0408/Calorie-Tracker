@@ -1,11 +1,17 @@
 
 
+
+
+import 'dart:ffi';
+
 import 'package:calorie_tracker/UI/totalCaloriesPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-  import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-  class FoodListPage extends StatefulWidget {
+
+class FoodListPage extends StatefulWidget {
     const FoodListPage({super.key});
 
     @override
@@ -17,9 +23,19 @@ import 'package:flutter/material.dart';
     int? len;
     int count=0;
     List<int> countList=[];
-    int totalCalories=0;
+    String? date;
+    DateTime? savedDateTime;
+    // int totalCalories=0;
+    int savedTotalCalories=0;
     Color card = const Color(0xFFe0c3fc);
     Color appbar = const Color(0xFF7b2cbf);
+    List bottomSheetList=[];
+    DateTime? savedDate;
+    Map<String, dynamic>? data;
+    List<dynamic>? dataOfCountList;
+    DocumentReference? documentReference;
+    DocumentReference? documentReferenceForCountList;
+    List? countListArray;
 
     @override
     void initState() {
@@ -32,13 +48,26 @@ import 'package:flutter/material.dart';
           FirebaseFirestore.instance.collection('Foods');
       QuerySnapshot querySnapshot = await collectionReference.get();
 
+      //Get the total calories
+      documentReference = FirebaseFirestore.instance.collection('TotalCalories').doc('7NELlvkDVQ6PLMVdbqpg');
+      DocumentSnapshot<Object?>? documentSnapshot = await documentReference?.get();
+      data = documentSnapshot?.data() as Map<String, dynamic>?;
+      savedTotalCalories = data?['totalCalories'];
+
+      //Get the countList
+      documentReferenceForCountList = FirebaseFirestore.instance.collection('FoodsConsumedToday').doc('XeEl2aYmbHyGfdVsOc9U');
+      DocumentSnapshot<Object?>? documentSnapshotForCountList = await documentReferenceForCountList?.get();
+      dataOfCountList = documentSnapshotForCountList?.get('countList') ;
+      //countListArray = dataOfCountList?['countList'] ;
+      print("dataOfCountList: $dataOfCountList");
+
+
       setState(() {
         len = querySnapshot.docs.length;
         for(int i=0;i<len!;i++) {
           countList.add(0);
         }
         list = querySnapshot.docs.map((doc) => doc.data()).toList();
-
       });
     }
 
@@ -61,7 +90,6 @@ import 'package:flutter/material.dart';
 
 
                   Map<String, dynamic> foodData = list![index];
-                  print(foodData['name']);
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -149,13 +177,25 @@ import 'package:flutter/material.dart';
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                      onPressed: () {
-                        totalCalories=0;
+                      onPressed: () async {
+
+                        if(await isTodayNewDay()) {
+                          savedTotalCalories=0;
+                          bottomSheetList.clear();
+                        }
+                        print(savedTotalCalories);
                           for(int i=0; i<countList.length;i++) {
-                              totalCalories += (countList[i]*(list?[i]['calories']) as int );
+                            savedTotalCalories =savedTotalCalories +  (countList[i]*(list?[i]['calories']) as int );
+
+                            if(countList[i]!=0) {
+                                bottomSheetList.add(list?[i]);
+                              }
                           }
-                          Navigator.push(context, MaterialPageRoute(builder: (context) =>  TotalCaloriesPage(totalCalories),));
-                          print(totalCalories);
+                        Map<String, dynamic> map1 = {"totalCalories": savedTotalCalories};
+                        documentReference?.set(map1).whenComplete(() => null);
+                        print(bottomSheetList);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) =>  TotalCaloriesPage(savedTotalCalories, bottomSheetList),));
+
                       },
 
                       child: const Text('Total Calories')),
@@ -172,5 +212,34 @@ import 'package:flutter/material.dart';
           ],
         ),
       );
+    }
+    Future<bool> isTodayNewDay() async {
+
+      DocumentReference docReference = FirebaseFirestore.instance.collection('TodayDate').doc('5dB7I6qTFwiEeGuUsW8X');
+      DocumentSnapshot<Object?>? documentSnapshot = await docReference.get();
+      Map<String, dynamic>? data1 = documentSnapshot.data() as Map<String, dynamic>?;
+
+      if (data1 != null) {
+        Timestamp? timestamp = data1['date'] as Timestamp?;
+        print("Timestamp: $timestamp");
+
+        if (timestamp != null) {
+          savedDateTime = timestamp.toDate();
+          print("Date: $savedDateTime");
+        }
+      }
+
+      DateTime now = DateTime.now();
+
+        if (savedDateTime?.year == now.year &&
+            savedDateTime?.month == now.month &&
+            savedDateTime?.day == now.day) {
+          return false;
+        } else {
+          Map<String, dynamic> map = {"date": now};
+          docReference.set(map).whenComplete(() => print(map));
+          return true;
+        }
+
     }
   }
