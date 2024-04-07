@@ -1,14 +1,9 @@
 
 
-
-
-import 'dart:ffi';
-
 import 'package:calorie_tracker/UI/totalCaloriesPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 class FoodListPage extends StatefulWidget {
@@ -22,7 +17,7 @@ class FoodListPage extends StatefulWidget {
     List? list;
     int? len;
     int count=0;
-    List<int> countList=[];
+    List<dynamic> countList=[];
     String? date;
     DateTime? savedDateTime;
     // int totalCalories=0;
@@ -35,7 +30,6 @@ class FoodListPage extends StatefulWidget {
     List<dynamic>? dataOfCountList;
     DocumentReference? documentReference;
     DocumentReference? documentReferenceForCountList;
-    List? countListArray;
 
     @override
     void initState() {
@@ -44,30 +38,35 @@ class FoodListPage extends StatefulWidget {
     }
 
     Future<void> readData() async {
+      print("read");
       CollectionReference collectionReference =
           FirebaseFirestore.instance.collection('Foods');
       QuerySnapshot querySnapshot = await collectionReference.get();
 
       //Get the total calories
-      documentReference = FirebaseFirestore.instance.collection('TotalCalories').doc('7NELlvkDVQ6PLMVdbqpg');
-      DocumentSnapshot<Object?>? documentSnapshot = await documentReference?.get();
-      data = documentSnapshot?.data() as Map<String, dynamic>?;
-      savedTotalCalories = data?['totalCalories'];
+      // documentReference = FirebaseFirestore.instance.collection('TotalCalories').doc('7NELlvkDVQ6PLMVdbqpg');
+      // DocumentSnapshot<Object?>? documentSnapshot = await documentReference?.get();
+      // data = documentSnapshot?.data() as Map<String, dynamic>?;
+      // savedTotalCalories = data?['totalCalories'];
 
       //Get the countList
       documentReferenceForCountList = FirebaseFirestore.instance.collection('FoodsConsumedToday').doc('XeEl2aYmbHyGfdVsOc9U');
       DocumentSnapshot<Object?>? documentSnapshotForCountList = await documentReferenceForCountList?.get();
-      dataOfCountList = documentSnapshotForCountList?.get('countList') ;
-      //countListArray = dataOfCountList?['countList'] ;
-      print("dataOfCountList: $dataOfCountList");
+      countList = documentSnapshotForCountList?.get('countList') ;
+
+
+      len = querySnapshot.docs.length;
+      // for(int i=0;i<len!;i++) {
+      //   countList.add(0);
+      // }
+
+
 
 
       setState(() {
-        len = querySnapshot.docs.length;
-        for(int i=0;i<len!;i++) {
-          countList.add(0);
-        }
+
         list = querySnapshot.docs.map((doc) => doc.data()).toList();
+        print(list);
       });
     }
 
@@ -87,8 +86,6 @@ class FoodListPage extends StatefulWidget {
                   if (list == null || list!.isEmpty) {
                     return const CircularProgressIndicator(); // or any other loading indicator
                   }
-
-
                   Map<String, dynamic> foodData = list![index];
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -178,7 +175,12 @@ class FoodListPage extends StatefulWidget {
                 children: [
                   ElevatedButton(
                       onPressed: () async {
-
+                        savedTotalCalories=0;
+                        await FirebaseFirestore.instance
+                            .collection('FoodsConsumedToday') // Replace 'your_collection' with your actual collection name
+                            .doc('XeEl2aYmbHyGfdVsOc9U') // Replace 'your_document_id' with the ID of the document containing the array
+                            .update({'countList': countList});
+                        bottomSheetList.clear();
                         if(await isTodayNewDay()) {
                           savedTotalCalories=0;
                           bottomSheetList.clear();

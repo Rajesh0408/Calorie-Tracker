@@ -1,10 +1,12 @@
 {
+
   "project_info": {
     "project_number": "545120632703",
     "project_id": "calorie-tracker-aea6b",
     "storage_bucket": "calorie-tracker-aea6b.appspot.com"
   },
   "client": [
+
     {
       "client_info": {
         "mobilesdk_app_id": "1:545120632703:android:fe054d1cc91202b82f644a",

@@ -70,7 +70,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 100,),
+                  SizedBox(height: 120,),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Text(totalCalories! > 1800 && totalCalories! < 2800
@@ -87,7 +87,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                 ],
               ),
             ),
-            SizedBox(height: 10,),
+            SizedBox(height: 30,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
