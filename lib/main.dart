@@ -15,7 +15,8 @@ void main() async{
     options: const FirebaseOptions(apiKey: "AIzaSyA7TyZ-6C_RfEX6qZ9Z9G50wf4au-TmAkg", appId: '545120632703', messagingSenderId: "1:545120632703:android:fe054d1cc91202b82f644a", projectId: "calorie-tracker-aea6b"),
   );
 
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
+            //theme: ThemeData.dark(),
             debugShowCheckedModeBanner: false,
             home: FoodListPage()));
 

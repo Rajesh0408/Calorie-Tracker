@@ -1,4 +1,3 @@
-
 import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +11,7 @@ import 'package:flutter/widgets.dart';
 class TotalCaloriesPage extends StatefulWidget {
   int? totalCalories;
   List? bottomSheetList;
-  TotalCaloriesPage(this.totalCalories,this.bottomSheetList, {super.key});
+  TotalCaloriesPage(this.totalCalories, this.bottomSheetList, {super.key});
 
   @override
   State<TotalCaloriesPage> createState() => _TotalCaloriesPageState();
@@ -26,14 +25,14 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
   List? bottomSheetList;
   int? len;
   int? remainingCalories;
-  ValueNotifier<double> valueNotifierEaten=ValueNotifier<double>(0.0);
-  ValueNotifier<double> valueNotifierRemaining=ValueNotifier<double>(0.0);
+  ValueNotifier<double> valueNotifierEaten = ValueNotifier<double>(0.0);
+  ValueNotifier<double> valueNotifierRemaining = ValueNotifier<double>(0.0);
 
   @override
   void initState() {
     super.initState();
     totalCalories = widget.totalCalories;
-    bottomSheetList=widget.bottomSheetList;
+    bottomSheetList = widget.bottomSheetList;
     len = bottomSheetList?.length;
     changeEatenProgressValue(totalCalories!);
     changeRemainingProgressValue(totalCalories!);
@@ -41,47 +40,50 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
   }
 
   void changeEatenProgressValue(int totalCalories) {
-    valueNotifierEaten.value = (totalCalories/1800)*100;
+    valueNotifierEaten.value = (totalCalories / 1800) * 100;
   }
 
   void changeRemainingProgressValue(int totalCalories) {
-    remainingCalories =1800-totalCalories;
-    if(remainingCalories!<0) {
-      remainingCalories=0;
+    remainingCalories = 1800 - totalCalories;
+    if (remainingCalories! < 0) {
+      remainingCalories = 0;
     }
-    valueNotifierRemaining.value = (remainingCalories!/1800)*100;
+    valueNotifierRemaining.value = (remainingCalories! / 1800) * 100;
   }
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appbar,
         title: Text('Calorie Tracker For Indian Food'),
-
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(
           children: [
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0),
-                color: card
-
-              ),
+                  borderRadius: BorderRadius.circular(20.0), color: card),
               child: Column(
                 children: [
-                  const SizedBox(height: 30,),
+                  const SizedBox(
+                    height: 30,
+                  ),
                   const Center(
                       child: Text(
                     'TOTAL CALORIES \n  INTAKE TODAY',
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   )),
-                  const SizedBox(height: 100,),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  if (totalCalories!>1800)
+                    const Text("Heyyy!! You achieved today's goal", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.deepOrange),),
+                    const SizedBox(
+                      height: 40,
+                    ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -101,22 +103,30 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                               );
                             },
                           ),
-                          const SizedBox(height: 20,),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 '$totalCalories',
-                                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.green),
+                                style: TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green),
                               ),
                               const Text(
                                 ' cal',
-                                style: TextStyle(fontSize: 25, color: Colors.green),
+                                style: TextStyle(
+                                    fontSize: 25, color: Colors.green),
                               ),
                             ],
                           ),
-                          Text('Eaten',style: TextStyle(fontSize: 20, color: Colors.green),),
-
+                          Text(
+                            'Eaten',
+                            style: TextStyle(fontSize: 20, color: Colors.green),
+                          ),
                         ],
                       ),
                       Column(
@@ -135,65 +145,98 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                               );
                             },
                           ),
-                          const SizedBox(height: 20,),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 '$remainingCalories ',
-                                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.red),
+                                style: TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red),
                               ),
                               const Text(
                                 ' cal',
-                                style: TextStyle(fontSize: 25, color: Colors.red),
+                                style:
+                                    TextStyle(fontSize: 25, color: Colors.red),
                               ),
                             ],
                           ),
-                          Text('Remaining',style: TextStyle(fontSize: 20, color: Colors.red),),
-
+                          Text(
+                            'Remaining',
+                            style: TextStyle(fontSize: 20, color: Colors.red),
+                          ),
                         ],
                       ),
                     ],
                   ),
-
-                  SizedBox(height: 30,),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Text(totalCalories! > 1800 && totalCalories! < 2800
-                        ? "That's correct amount of calories and very healthy to consume!"
-                        : totalCalories! < 1800
-                            ? "Very Low Calories. Please take more calories"
-                            : "That's a lot of calories and very unhealthy for you", style: TextStyle(fontSize: 20, color: totalCalories! < 1800 || totalCalories! > 2800?Colors.red : Colors.green ),),
+                  SizedBox(
+                    height: 30,
                   ),
-                  const SizedBox(height:50,),
-                  const Text('Average daily intake for men is 2500 calories', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),),
-                  const Text('Average daily intake for women is 2000 calories', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),),
-                  const SizedBox(height: 30,),
-
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0,right: 25),
+                    child: Text(
+                      totalCalories! > 1800 && totalCalories! < 2800
+                          ? "That's correct amount of calories and very healthy to consume!"
+                          : totalCalories! < 1800
+                              ? "Very Low Calories. Please take more calories"
+                              : "That's a lot of calories and very unhealthy for you",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: totalCalories! < 1800 || totalCalories! > 2800
+                              ? Colors.red
+                              : Colors.green),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 80,
+                  ),
+                  const Text(
+                    'Average daily intake for men is 2500 calories',
+                    style: TextStyle(
+                        color: Colors.blue, fontWeight: FontWeight.bold),
+                  ),
+                  const Text(
+                    'Average daily intake for women is 2000 calories',
+                    style: TextStyle(
+                        color: Colors.blue, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 30,),
+            const SizedBox(
+              height: 30,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
-                  style: const ButtonStyle(
-                    padding:MaterialStatePropertyAll(EdgeInsets.only(left: 30, right: 30, top: 15,bottom: 15)),
-                  ),
+                    style: const ButtonStyle(
+                      padding: MaterialStatePropertyAll(EdgeInsets.only(
+                          left: 30, right: 30, top: 15, bottom: 15)),
+                    ),
                     onPressed: () {
                       Navigator.pop(context);
-                    }, child: const Text('Recalculate')),
+                    },
+                    child: const Text('Recalculate')),
                 ElevatedButton(
-                    style: ButtonStyle(
-                      padding:MaterialStatePropertyAll(EdgeInsets.only(left: 30, right: 30, top: 15,bottom: 15)),
+                    style: const ButtonStyle(
+                      padding: MaterialStatePropertyAll(EdgeInsets.only(
+                          left: 30, right: 30, top: 15, bottom: 15)),
                     ),
                     onPressed: () {
                       BottomSheet();
-                    }, child: Expanded(child: const Text("Foods consumed today"))),
+                    },
+                    child: const Expanded(child: Text("Foods consumed today"))),
               ],
             ),
-
           ],
         ),
       ),
@@ -201,30 +244,38 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
   }
 
   Future BottomSheet() {
-    return showModalBottomSheet(context: context, builder:(BuildContext context) {
-      return ListView.builder(itemCount: len, itemBuilder: (context, index) {
-        return Row(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(9.0),
-              child: SizedBox(
-                  height: 50,
-                  width: 50,
-                  child: Hero(
-                    tag: 'image$index',
-                    child: Image.network("${bottomSheetList?[index]['image']}",fit: BoxFit.cover,),
-                  )
-              ),
-            ),
-            Expanded(
-              child: Text('${bottomSheetList?[index]['name']} (${bottomSheetList?[index]['calories']} cal)',
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
-            ),
-          ],
-        );
-      },);
-    });
+    return showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return ListView.builder(
+            itemCount: len,
+            itemBuilder: (context, index) {
+              return Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(9.0),
+                    child: SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: Hero(
+                          tag: 'image$index',
+                          child: Image.network(
+                            "${bottomSheetList?[index]['image']}",
+                            fit: BoxFit.cover,
+                          ),
+                        )),
+                  ),
+                  Expanded(
+                    child: Text(
+                      '${bottomSheetList?[index]['name']} (${bottomSheetList?[index]['calories']} cal)',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        });
   }
 }
