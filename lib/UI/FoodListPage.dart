@@ -1,3 +1,4 @@
+import 'package:calorie_tracker/UI/SignInPage.dart';
 import 'package:calorie_tracker/UI/totalCaloriesPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -80,8 +81,17 @@ class _FoodListPageState extends State<FoodListPage> {
     return Scaffold(
       // backgroundColor: card,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: appbar,
         title: Text('Calorie Tracker For Indian Food'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout, color: Colors.black,),
+            onPressed: () {
+              _showLogoutDialog(context);
+            },
+          ),
+        ]
       ),
       body: Column(
         children: [
@@ -333,5 +343,35 @@ class _FoodListPageState extends State<FoodListPage> {
           'XeEl2aYmbHyGfdVsOc9U') // Replace 'your_document_id' with the ID of the document containing the array
           .update({'countList': countList});
     }
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext) {
+          return AlertDialog(
+            title: Text('Logout'),
+            content: Text('Are you sure you want to log out?'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.red),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignInPage(),
+                        ));
+                  },
+                  child: const Text('Logout')),
+            ],
+          );
+        });
   }
 }

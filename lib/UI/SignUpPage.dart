@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'SignInPage.dart';
+
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -48,7 +50,9 @@ class _SignUpPageState extends State<SignUpPage> {
     String? groupValue;
 
     return Scaffold(
+
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: appbar,
         title: const Text('Calorie Tracker For Indian Food'),
       ),
@@ -63,6 +67,18 @@ class _SignUpPageState extends State<SignUpPage> {
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF7b2cbf)),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Center(
+              child: Text(
+                "Create your account",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -331,9 +347,11 @@ class _SignUpPageState extends State<SignUpPage> {
           Padding(
             padding: const EdgeInsets.only(left: 45.0, right: 45),
             child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SignInPage(),));
+                },
                 child: const Text(
-                  'Start the journey of Calorie!!',
+                  'Sign Up',
                   style: TextStyle(fontSize: 20),
                 )),
           ),
@@ -351,7 +369,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   style: TextStyle(fontSize: 18),
                 ),
                 onPressed: () {
-
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SignInPage(),));
                 },
               ),
             ],
