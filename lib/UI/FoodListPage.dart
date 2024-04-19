@@ -104,7 +104,17 @@ class _FoodListPageState extends State<FoodListPage> {
                   search(searchText);
                 });
               },
-              leading: Icon(Icons.search),
+              leading: Icon(Icons.search, ),
+              trailing: [IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                    setState(() {
+                      controller.clear();
+                      searchText="";
+                      search(searchText);
+                    });
+                },
+              ),]
             ),
           ),
           Expanded(

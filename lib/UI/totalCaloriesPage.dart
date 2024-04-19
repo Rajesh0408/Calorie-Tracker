@@ -247,34 +247,44 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
     return showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
-          return ListView.builder(
-            itemCount: len,
-            itemBuilder: (context, index) {
-              return Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(11.0),
-                    child: SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: Hero(
-                          tag: 'image$index',
-                          child: Image.network(
-                            "${bottomSheetList?[index]['image']}",
-                            fit: BoxFit.cover,
+          return Expanded(
+            child: Column(
+              children: [
+                SizedBox(height: 20,),
+                const Center(child: Text("Foods Consumed Today", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)),
+                Flexible(
+                  child: ListView.builder(
+                    itemCount: len,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(11.0),
+                            child: SizedBox(
+                                height: 50,
+                                width: 50,
+                                child: Hero(
+                                  tag: 'image$index',
+                                  child: Image.network(
+                                    "${bottomSheetList?[index]['image']}",
+                                    fit: BoxFit.cover,
+                                  ),
+                                )),
                           ),
-                        )),
+                          Expanded(
+                            child: Text(
+                              '${bottomSheetList?[index]['name']} (${bottomSheetList?[index]['calories']} cal)',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                  Expanded(
-                    child: Text(
-                      '${bottomSheetList?[index]['name']} (${bottomSheetList?[index]['calories']} cal)',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                  ),
-                ],
-              );
-            },
+                ),
+              ],
+            ),
           );
         });
   }
