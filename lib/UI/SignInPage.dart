@@ -24,6 +24,7 @@ class _SignInPageState extends State<SignInPage> {
   bool signing= false;
   bool emailValid=true;
   bool passwordValid=true;
+  bool isObscure = true;
 
   @override
   void dispose() {
@@ -99,6 +100,15 @@ class _SignInPageState extends State<SignInPage> {
             child: TextField(
               controller: passwordCon,
               decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        isObscure ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        isObscure=!isObscure;
+                      });
+                    },
+                  ),
                 icon: Icon(Icons.password),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0)),

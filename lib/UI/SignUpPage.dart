@@ -36,6 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Color card = const Color(0xFFe0c3fc);
   Color appbar = const Color(0xFF7b2cbf);
   String? gender;
+  bool isObscure = true;
   List activityLevelList = [
     "Sedentary (little or no exercise)",
     "Lightly active (light exercise/sports 1-3 days/week)",
@@ -49,12 +50,12 @@ class _SignUpPageState extends State<SignUpPage> {
     "I want to maintain the weight"
   ];
   String? goal;
-  bool emailValid=true;
-  bool passwordValid=true;
-  bool weightValid=true;
-  bool heightValid=true;
-  bool ageValid=true;
-  bool signing= false;
+  bool emailValid = true;
+  bool passwordValid = true;
+  bool weightValid = true;
+  bool heightValid = true;
+  bool ageValid = true;
+  bool signing = false;
 
   @override
   void dispose() {
@@ -131,18 +132,18 @@ class _SignUpPageState extends State<SignUpPage> {
             child: TextField(
               controller: emailCon,
               decoration: InputDecoration(
-                icon: Icon(Icons.email),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)),
-                hintText: "Email",
-                errorText: emailValid? null : "Invalid email"
-              ),
+                  icon: Icon(Icons.email),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0)),
+                  hintText: "Email",
+                  errorText: emailValid ? null : "Invalid email"),
               onChanged: (val) {
-               setState(() {
+                setState(() {
                   email = val.toString();
-                  emailValid= RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email!);
-
-               });
+                  emailValid = RegExp(
+                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                      .hasMatch(email!);
+                });
               },
             ),
           ),
@@ -154,17 +155,27 @@ class _SignUpPageState extends State<SignUpPage> {
                 left: 10.0, right: 25.0, top: 5, bottom: 5),
             child: TextField(
               controller: passwordCon,
+              obscureText: isObscure,
               decoration: InputDecoration(
-                icon: Icon(Icons.password),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)),
-                hintText: "Password",
-                errorText: passwordValid?null: "Password length should be >=8"
-              ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        isObscure ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        isObscure=!isObscure;
+                      });
+                    },
+                  ),
+                  icon: Icon(Icons.password),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0)),
+                  hintText: "Password",
+                  errorText:
+                      passwordValid ? null : "Password length should be >=8"),
               onChanged: (val) {
                 setState(() {
                   password = val.toString();
-                  passwordValid = password!.length>=8;
+                  passwordValid = password!.length >= 8;
                 });
               },
             ),
@@ -176,16 +187,15 @@ class _SignUpPageState extends State<SignUpPage> {
               controller: weightCon,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                icon: Image.asset("assets/weight.png"),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)),
-                hintText: "Weight (Kg)",
-                errorText: weightValid?null : "Invalid weight"
-              ),
+                  icon: Image.asset("assets/weight.png"),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0)),
+                  hintText: "Weight (Kg)",
+                  errorText: weightValid ? null : "Invalid weight"),
               onChanged: (val) {
                 setState(() {
                   weight = int.parse(val);
-                  weightValid = weight!>=10 && weight!<=200;
+                  weightValid = weight! >= 10 && weight! <= 200;
                 });
               },
             ),
@@ -197,16 +207,15 @@ class _SignUpPageState extends State<SignUpPage> {
               controller: heightCon,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                icon: Icon(Icons.height),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)),
-                hintText: "Height (CM)",
-                  errorText: heightValid?null : "Invalid weight"
-              ),
+                  icon: Icon(Icons.height),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0)),
+                  hintText: "Height (CM)",
+                  errorText: heightValid ? null : "Invalid weight"),
               onChanged: (val) {
                 setState(() {
                   height = int.parse(val);
-                  heightValid = height!>=70 && height!<=300;
+                  heightValid = height! >= 70 && height! <= 300;
                 });
               },
             ),
@@ -218,16 +227,15 @@ class _SignUpPageState extends State<SignUpPage> {
               controller: ageCon,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                icon: Image.asset("assets/age.png"),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)),
-                hintText: "Age",
-                  errorText: ageValid?null : "Invalid weight"
-              ),
+                  icon: Image.asset("assets/age.png"),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0)),
+                  hintText: "Age",
+                  errorText: ageValid ? null : "Invalid weight"),
               onChanged: (val) {
                 setState(() {
                   age = int.parse(val);
-                  ageValid = age!>=1 && age!<=120;
+                  ageValid = age! >= 1 && age! <= 120;
                 });
               },
             ),
@@ -381,10 +389,21 @@ class _SignUpPageState extends State<SignUpPage> {
             padding: const EdgeInsets.only(left: 45.0, right: 45),
             child: ElevatedButton(
                 onPressed: () {
-                  if (email != null && password != null && name!=null && weight!=null && height!=null
-                      && age!=null && gender!=null && activityLevel!=null && goal!=null &&
-                       emailValid && passwordValid && weightValid && heightValid && ageValid ) {
-                        signUp();
+                  if (email != null &&
+                      password != null &&
+                      name != null &&
+                      weight != null &&
+                      height != null &&
+                      age != null &&
+                      gender != null &&
+                      activityLevel != null &&
+                      goal != null &&
+                      emailValid &&
+                      passwordValid &&
+                      weightValid &&
+                      heightValid &&
+                      ageValid) {
+                    signUp();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text("Please fill the above details correctly"),
@@ -393,10 +412,12 @@ class _SignUpPageState extends State<SignUpPage> {
                     ));
                   }
                 },
-                child:signing? CircularProgressIndicator(): const Text(
-                  'Sign Up',
-                  style: TextStyle(fontSize: 20),
-                )),
+                child: signing
+                    ? CircularProgressIndicator()
+                    : const Text(
+                        'Sign Up',
+                        style: TextStyle(fontSize: 20),
+                      )),
           ),
 
           Row(
@@ -431,22 +452,22 @@ class _SignUpPageState extends State<SignUpPage> {
 
   void signUp() async {
     setState(() {
-      signing=true;
+      signing = true;
     });
-    CollectionReference collectionReference = FirebaseFirestore.instance.collection('UsersList');
+    CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection('UsersList');
     collectionReference.add({
       "name": name,
       "email": email,
       "password": password,
-      "weight":weight,
+      "weight": weight,
       "height": height,
       "age": age,
-      "gender":gender,
-      "activityLevel":activityLevel,
-      "goal":goal,
-      "countList":[],
-    }
-    );
+      "gender": gender,
+      "activityLevel": activityLevel,
+      "goal": goal,
+      "countList": [],
+    });
 
     User? user = await auth.signUpWithEmailAndPassword(email!, password!);
     if (user != null) {
@@ -461,11 +482,11 @@ class _SignUpPageState extends State<SignUpPage> {
         backgroundColor: appbar,
       ));
       setState(() {
-        signing=false;
+        signing = false;
       });
     } else {
       setState(() {
-        signing=false;
+        signing = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Failed to Sign Up"),
