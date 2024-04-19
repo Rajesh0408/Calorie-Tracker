@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
@@ -11,7 +10,8 @@ import 'package:flutter/widgets.dart';
 class TotalCaloriesPage extends StatefulWidget {
   int? totalCalories;
   List? bottomSheetList;
-  TotalCaloriesPage(this.totalCalories, this.bottomSheetList, {super.key});
+  double? calories;
+  TotalCaloriesPage(this.totalCalories, this.bottomSheetList,  this.calories, {super.key});
 
   @override
   State<TotalCaloriesPage> createState() => _TotalCaloriesPageState();
@@ -27,10 +27,12 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
   int? remainingCalories;
   ValueNotifier<double> valueNotifierEaten = ValueNotifier<double>(0.0);
   ValueNotifier<double> valueNotifierRemaining = ValueNotifier<double>(0.0);
+  double? calories;
 
   @override
   void initState() {
     super.initState();
+    calories= widget.calories;
     totalCalories = widget.totalCalories;
     bottomSheetList = widget.bottomSheetList;
     len = bottomSheetList?.length;
@@ -40,15 +42,15 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
   }
 
   void changeEatenProgressValue(int totalCalories) {
-    valueNotifierEaten.value = (totalCalories / 1800) * 100;
+    valueNotifierEaten.value = (totalCalories / calories!) * 100;
   }
 
   void changeRemainingProgressValue(int totalCalories) {
-    remainingCalories = 1800 - totalCalories;
+    remainingCalories = calories!.round() - totalCalories;
     if (remainingCalories! < 0) {
       remainingCalories = 0;
     }
-    valueNotifierRemaining.value = (remainingCalories! / 1800) * 100;
+    valueNotifierRemaining.value = (remainingCalories! / calories!) * 100;
   }
 
   @override
@@ -78,7 +80,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                   const SizedBox(
                     height: 40,
                   ),
-                  if (totalCalories!>1800)
+                  if (totalCalories!>calories!)
                     const Text("Heyyy!! You achieved today's goal", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),),
                     const SizedBox(
                       height: 40,
@@ -179,15 +181,15 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 25.0,right: 25),
                     child: Text(
-                      totalCalories! > 1800 && totalCalories! < 2800
+                      totalCalories! > calories!  && totalCalories! < 3000
                           ? "That's correct amount of calories and very healthy to consume!"
-                          : totalCalories! < 1800
-                              ? "Very Low Calories. Please take more calories"
+                          : totalCalories! < calories!
+                          ? "Very Low Calories. Please take more calories"
                               : "That's a lot of calories and very unhealthy for you",
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: totalCalories! < 1800 || totalCalories! > 2800
+                          color: totalCalories! < calories!  || totalCalories! > 3000
                               ? Colors.red
                               : Colors.green),
                     ),

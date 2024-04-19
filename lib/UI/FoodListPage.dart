@@ -35,21 +35,81 @@ class _FoodListPageState extends State<FoodListPage> {
   List searchIndexList = [];
   bool bl=false;
   String? email;
+  List<Map<String, dynamic>>? usersList = [];
+  Map<String, dynamic>? userdt;
+  double? calories;
+  String? DocId;
 
   @override
   void initState() {
-    readData();
     email=widget.email;
+    readData();
+    userData();
+
     super.initState();
   }
 
-  // Future<void> calorieCalculation() {
-  //
-  // }
-  //
-  // Future<void> userData() {
-  //
-  // }
+  void calorieCalculation()  {
+    int weight=userdt?['weight'];
+    int height=userdt?['height'];
+    int age=userdt?['age'];
+    String gender=userdt?['gender'];
+    String activityLevel=userdt?['activityLevel'];
+    String goal=userdt?['goal'];
+    // countList = userdt?['countList'];
+
+    print(weight);
+    print(height);
+    print(age);
+    print(gender);
+    print(activityLevel);
+    print(goal);
+    double BMR;
+
+    if(gender=="Male") {
+      BMR=10 * weight + 6.25 * height - 5 * age + 5 ;
+    } else {
+      BMR= 10 * weight + 6.25 * height - 5 * age - 161 ;
+    }
+
+    if(activityLevel== "Sedentary (little or no exercise)") {
+      calories= BMR*1.2;
+    } else if(activityLevel=="Lightly active (light exercise/sports 1-3 days/week)") {
+      calories= BMR*1.375;
+    } else if(activityLevel== "Moderately active (moderate exercise/sports 3-5 days/week)") {
+      calories= BMR*1.55;
+    } else if(activityLevel=="Very active (hard exercise/sports 6-7 days a week)") {
+      calories= BMR*1.725;
+    } else {
+      calories= BMR*1.9;
+    }
+    if(goal=="I want to gain weight") {
+      calories =(calories!+500);
+    } else if(goal=="I want to loss weight") {
+      calories =(calories!-500);
+    } else {
+      null;
+    }
+    print(calories);
+
+  }
+
+  Future<void> userData() async {
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('UsersList').get();
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      DocId=doc.id ;
+      userdt = doc.data() as Map<String, dynamic>;
+      if(userdt?['email']==email) {
+        break;
+      }
+    }
+    calorieCalculation();
+    print("DocId");
+    print(DocId);
+
+  }
+
 
   Future<void> readData() async {
     try {
@@ -60,17 +120,18 @@ class _FoodListPageState extends State<FoodListPage> {
 
       // Get the countList
       documentReferenceForCountList = FirebaseFirestore.instance
-          .collection('FoodsConsumedToday')
-          .doc('XeEl2aYmbHyGfdVsOc9U');
+          .collection('UsersList')
+          .doc(DocId);
       DocumentSnapshot<Object?>? documentSnapshotForCountList =
           await documentReferenceForCountList?.get();
       countList = documentSnapshotForCountList?.get('countList');
 
       len = querySnapshot.docs.length;
-      // for(int i=0;i<len!;i++) {
-      //   countList.add(0);
-      // }
-
+      if(countList.length==0) {
+        for(int i=0;i<len!;i++) {
+          countList.add(0);
+        }
+      }
       setState(() {
         isTodayNewDay();
         list = querySnapshot.docs.map((doc) => doc.data()).toList();
@@ -193,9 +254,9 @@ class _FoodListPageState extends State<FoodListPage> {
                                   }  });
                                   FirebaseFirestore.instance
                                       .collection(
-                                      'FoodsConsumedToday') // Replace 'your_collection' with your actual collection name
+                                      'UsersList') // Replace 'your_collection' with your actual collection name
                                       .doc(
-                                      'XeEl2aYmbHyGfdVsOc9U') // Replace 'your_document_id' with the ID of the document containing the array
+                                      DocId) // Replace 'your_document_id' with the ID of the document containing the array
                                       .update({'countList': countList});
 
                               },
@@ -232,9 +293,9 @@ class _FoodListPageState extends State<FoodListPage> {
                                 });
                                   FirebaseFirestore.instance
                                       .collection(
-                                      'FoodsConsumedToday') // Replace 'your_collection' with your actual collection name
+                                      'UsersList') // Replace 'your_collection' with your actual collection name
                                       .doc(
-                                      'XeEl2aYmbHyGfdVsOc9U') // Replace 'your_document_id' with the ID of the document containing the array
+                                      DocId) // Replace 'your_document_id' with the ID of the document containing the array
                                       .update({'countList': countList});
 
                               },
@@ -273,15 +334,11 @@ class _FoodListPageState extends State<FoodListPage> {
                           bottomSheetList.add(list[i]);
                         }
                       }
-                      Map<String, dynamic> map1 = {
-                        "totalCalories": savedTotalCalories
-                      };
-                      documentReference?.set(map1).whenComplete(() => null);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => TotalCaloriesPage(
-                                savedTotalCalories, bottomSheetList),
+                                savedTotalCalories, bottomSheetList, calories),
                           ));
                     },
                     child: const Text('Total Calories')),
@@ -349,9 +406,9 @@ class _FoodListPageState extends State<FoodListPage> {
       });
       await FirebaseFirestore.instance
           .collection(
-          'FoodsConsumedToday') // Replace 'your_collection' with your actual collection name
+          'UsersList') // Replace 'your_collection' with your actual collection name
           .doc(
-          'XeEl2aYmbHyGfdVsOc9U') // Replace 'your_document_id' with the ID of the document containing the array
+          DocId) // Replace 'your_document_id' with the ID of the document containing the array
           .update({'countList': countList});
     }
   }

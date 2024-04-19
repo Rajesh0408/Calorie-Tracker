@@ -444,6 +444,7 @@ class _SignUpPageState extends State<SignUpPage> {
       "gender":gender,
       "activityLevel":activityLevel,
       "goal":goal,
+      "countList":[],
     }
     );
 
