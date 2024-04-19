@@ -1,3 +1,8 @@
+import 'dart:ffi';
+
+import 'package:calorie_tracker/FireBaseAuth/FirebaseAuthServices.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'SignInPage.dart';
@@ -10,11 +15,27 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  FirebaseAuthServices auth = FirebaseAuthServices();
+
+  TextEditingController nameCon = TextEditingController();
+  TextEditingController weightCon = TextEditingController();
+  TextEditingController heightCon = TextEditingController();
+  TextEditingController ageCon = TextEditingController();
+  TextEditingController emailCon = TextEditingController();
+  TextEditingController passwordCon = TextEditingController();
+  TextEditingController genderCon = TextEditingController();
+  TextEditingController activityLevelCon = TextEditingController();
+  String? name;
+  String? email;
+  String? password;
+  int? weight;
+  int? height;
+  int? age;
+  String? activityLevel;
+  String? groupValue;
   Color card = const Color(0xFFe0c3fc);
   Color appbar = const Color(0xFF7b2cbf);
-  int? height;
-  int? weight;
-  String gender = "Male";
+  String? gender;
   List activityLevelList = [
     "Sedentary (little or no exercise)",
     "Lightly active (light exercise/sports 1-3 days/week)",
@@ -27,30 +48,31 @@ class _SignUpPageState extends State<SignUpPage> {
     "I want to loss weight",
     "I want to maintain the weight"
   ];
-  String? dropDownValue;
+  String? goal;
+  bool emailValid=true;
+  bool passwordValid=true;
+  bool weightValid=true;
+  bool heightValid=true;
+  bool ageValid=true;
+  bool signing= false;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    nameCon.dispose();
+    weightCon.dispose();
+    heightCon.dispose();
+    ageCon.dispose();
+    emailCon.dispose();
+    passwordCon.dispose();
+    genderCon.dispose();
+    activityLevelCon.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController nameCon = TextEditingController();
-    TextEditingController weightCon = TextEditingController();
-    TextEditingController heightCon = TextEditingController();
-    TextEditingController ageCon = TextEditingController();
-    TextEditingController emailCon = TextEditingController();
-    TextEditingController passwordCon = TextEditingController();
-    TextEditingController genderCon = TextEditingController();
-    TextEditingController activityLevelCon = TextEditingController();
-    String name;
-    String email;
-    String password;
-    int weight;
-    int height;
-    int age;
-
-    String activityLevel;
-    String? groupValue;
-
     return Scaffold(
-
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: appbar,
@@ -113,11 +135,14 @@ class _SignUpPageState extends State<SignUpPage> {
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0)),
                 hintText: "Email",
+                errorText: emailValid? null : "Invalid email"
               ),
               onChanged: (val) {
-                setState(() {
+               setState(() {
                   email = val.toString();
-                });
+                  emailValid= RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email!);
+
+               });
               },
             ),
           ),
@@ -134,10 +159,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0)),
                 hintText: "Password",
+                errorText: passwordValid?null: "Password length should be >=8"
               ),
               onChanged: (val) {
                 setState(() {
                   password = val.toString();
+                  passwordValid = password!.length>=8;
                 });
               },
             ),
@@ -153,10 +180,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0)),
                 hintText: "Weight (Kg)",
+                errorText: weightValid?null : "Invalid weight"
               ),
               onChanged: (val) {
                 setState(() {
                   weight = int.parse(val);
+                  weightValid = weight!>=10 && weight!<=200;
                 });
               },
             ),
@@ -172,10 +201,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0)),
                 hintText: "Height (CM)",
+                  errorText: heightValid?null : "Invalid weight"
               ),
               onChanged: (val) {
                 setState(() {
                   height = int.parse(val);
+                  heightValid = height!>=70 && height!<=300;
                 });
               },
             ),
@@ -191,10 +222,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0)),
                 hintText: "Age",
+                  errorText: ageValid?null : "Invalid weight"
               ),
               onChanged: (val) {
                 setState(() {
                   age = int.parse(val);
+                  ageValid = age!>=1 && age!<=120;
                 });
               },
             ),
@@ -280,10 +313,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           }).toList(),
                           onChanged: (value) {
                             setState(() {
-                              dropDownValue = value;
+                              activityLevel = value;
                             });
                           },
-                          value: dropDownValue,
+                          value: activityLevel,
                           hint: const Text("Activity level"),
                         ),
                       ),
@@ -328,10 +361,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           }).toList(),
                           onChanged: (value) {
                             setState(() {
-                              dropDownValue = value;
+                              goal = value;
                             });
                           },
-                          value: dropDownValue,
+                          value: goal,
                           hint: const Text("Goal"),
                         ),
                       ),
@@ -348,9 +381,19 @@ class _SignUpPageState extends State<SignUpPage> {
             padding: const EdgeInsets.only(left: 45.0, right: 45),
             child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SignInPage(),));
+                  if (email != null && password != null && name!=null && weight!=null && height!=null
+                      && age!=null && gender!=null && activityLevel!=null && goal!=null &&
+                       emailValid && passwordValid && weightValid && heightValid && ageValid ) {
+                        signUp();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Please fill the above details correctly"),
+                      duration: Duration(seconds: 2),
+                      backgroundColor: appbar,
+                    ));
+                  }
                 },
-                child: const Text(
+                child:signing? CircularProgressIndicator(): const Text(
                   'Sign Up',
                   style: TextStyle(fontSize: 20),
                 )),
@@ -369,7 +412,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   style: TextStyle(fontSize: 18),
                 ),
                 onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SignInPage(),));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SignInPage(),
+                      ));
                 },
               ),
             ],
@@ -380,5 +427,50 @@ class _SignUpPageState extends State<SignUpPage> {
         ],
       ),
     );
+  }
+
+  void signUp() async {
+    setState(() {
+      signing=true;
+    });
+    CollectionReference collectionReference = FirebaseFirestore.instance.collection('UsersList');
+    collectionReference.add({
+      "name": name,
+      "email": email,
+      "password": password,
+      "weight":weight,
+      "height": height,
+      "age": age,
+      "gender":gender,
+      "activityLevel":activityLevel,
+      "goal":goal,
+    }
+    );
+
+    User? user = await auth.signUpWithEmailAndPassword(email!, password!);
+    if (user != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SignInPage(),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Successfully Signed Up"),
+        duration: Duration(seconds: 2),
+        backgroundColor: appbar,
+      ));
+      setState(() {
+        signing=false;
+      });
+    } else {
+      setState(() {
+        signing=false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Failed to Sign Up"),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 }

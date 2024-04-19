@@ -1,3 +1,5 @@
+import 'package:calorie_tracker/FireBaseAuth/FirebaseAuthServices.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'FoodListPage.dart';
@@ -11,12 +13,26 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  FirebaseAuthServices auth = FirebaseAuthServices();
+
   TextEditingController emailCon = TextEditingController();
   TextEditingController passwordCon = TextEditingController();
   String? email;
   String? password;
   Color card = const Color(0xFFe0c3fc);
   Color appbar = const Color(0xFF7b2cbf);
+  bool signing= false;
+  bool emailValid=true;
+  bool passwordValid=true;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    emailCon.dispose();
+    passwordCon.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,10 +80,12 @@ class _SignInPageState extends State<SignInPage> {
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0)),
                 hintText: "Email",
+                errorText: emailValid? null: "Invalid email"
               ),
               onChanged: (val) {
                 setState(() {
                   email = val.toString();
+                  emailValid= RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email!);
                 });
               },
             ),
@@ -85,10 +103,13 @@ class _SignInPageState extends State<SignInPage> {
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0)),
                 hintText: "Password",
+                errorText: passwordValid?null:"Password length should be >=8"
               ),
               onChanged: (val) {
                 setState(() {
                   password = val.toString();
+                  passwordValid = password!.length>=8;
+
                 });
               },
             ),
@@ -100,10 +121,17 @@ class _SignInPageState extends State<SignInPage> {
             width: 300,
             child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => FoodListPage(),));
-
+                 if(email!=null && password!=null && passwordValid && emailValid) {
+                   signIn();
+                 } else {
+                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                     content: const Text("Please fill the above details correctly"),
+                     duration: Duration(seconds: 2),
+                     backgroundColor: appbar,
+                   ));
+                 }
                 },
-                child: const Text(
+                child: signing? CircularProgressIndicator():const Text(
                   'Sign In',
                   style: TextStyle(fontSize: 20),
                 )),
@@ -112,12 +140,12 @@ class _SignInPageState extends State<SignInPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 "Don't have an account?",
                 style: TextStyle(fontSize: 15),
               ),
               TextButton(
-                child: Text(
+                child: const Text(
                   'Sign Up',
                   style: TextStyle(fontSize: 18),
                 ),
@@ -130,5 +158,36 @@ class _SignInPageState extends State<SignInPage> {
         ],
       ),
     );
+  }
+
+  void signIn() async{
+    setState(() {
+      signing= true;
+    });
+    User? user = await auth.signInWithEmailAndPassword(email!, password!);
+    if(user!=null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FoodListPage(email!),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text("Successfully Signed In"),
+        duration: Duration(seconds: 2),
+        backgroundColor: appbar,
+      ));
+      setState(() {
+        signing= false;
+      });
+    } else {
+      setState(() {
+        signing= false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Failed to Sign In"),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 }

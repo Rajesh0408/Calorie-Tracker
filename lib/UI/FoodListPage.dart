@@ -1,11 +1,13 @@
 import 'package:calorie_tracker/UI/SignInPage.dart';
 import 'package:calorie_tracker/UI/totalCaloriesPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FoodListPage extends StatefulWidget {
-  const FoodListPage({super.key});
+  String email;
+  FoodListPage( this.email, {super.key});
   @override
   State<FoodListPage> createState() => _FoodListPageState();
 }
@@ -32,13 +34,22 @@ class _FoodListPageState extends State<FoodListPage> {
   List searchList = [];
   List searchIndexList = [];
   bool bl=false;
+  String? email;
 
   @override
   void initState() {
-    super.initState();
     readData();
-
+    email=widget.email;
+    super.initState();
   }
+
+  // Future<void> calorieCalculation() {
+  //
+  // }
+  //
+  // Future<void> userData() {
+  //
+  // }
 
   Future<void> readData() async {
     try {
@@ -363,6 +374,7 @@ class _FoodListPageState extends State<FoodListPage> {
                   )),
               TextButton(
                   onPressed: () {
+                    FirebaseAuth.instance.signOut();
                     Navigator.push(
                         context,
                         MaterialPageRoute(
