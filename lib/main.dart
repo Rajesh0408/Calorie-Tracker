@@ -1,12 +1,10 @@
 
 
-import 'package:calorie_tracker/UI/FoodListPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'UI/SignInPage.dart';
-import 'UI/SignUpPage.dart';
 
 
 
@@ -20,8 +18,6 @@ void main() async{
             //theme: ThemeData.dark(),
             debugShowCheckedModeBanner: false,
             home: SignInPage()));
-
-
 }
 
 Future<bool> isNew() async {

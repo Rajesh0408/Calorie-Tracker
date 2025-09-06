@@ -1,4 +1,4 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:calorie_tracker/FireBaseAuth/FirebaseAuthServices.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -93,7 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             ),
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.all(8.0),
             child: Center(
               child: Text(
@@ -111,7 +111,7 @@ class _SignUpPageState extends State<SignUpPage> {
             child: TextField(
               controller: nameCon,
               decoration: InputDecoration(
-                icon: Icon(Icons.person),
+                icon: const Icon(Icons.person),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0)),
                 hintText: "Name",
@@ -123,7 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
               },
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Padding(
@@ -132,7 +132,7 @@ class _SignUpPageState extends State<SignUpPage> {
             child: TextField(
               controller: emailCon,
               decoration: InputDecoration(
-                  icon: Icon(Icons.email),
+                  icon: const Icon(Icons.email),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0)),
                   hintText: "Email",
@@ -147,7 +147,7 @@ class _SignUpPageState extends State<SignUpPage> {
               },
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Padding(
@@ -166,7 +166,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       });
                     },
                   ),
-                  icon: Icon(Icons.password),
+                  icon: const Icon(Icons.password),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0)),
                   hintText: "Password",
@@ -207,7 +207,7 @@ class _SignUpPageState extends State<SignUpPage> {
               controller: heightCon,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                  icon: Icon(Icons.height),
+                  icon: const Icon(Icons.height),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0)),
                   hintText: "Height (CM)",
@@ -245,14 +245,14 @@ class _SignUpPageState extends State<SignUpPage> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 5,
                 ),
                 Image.asset("assets/gender.png"),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
-                Text(
+                const Text(
                   "Gender:",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
@@ -265,7 +265,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     });
                   },
                 ),
-                Text(
+                const Text(
                   'Male',
                   style: TextStyle(fontSize: 16),
                 ),
@@ -278,7 +278,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     });
                   },
                 ),
-                Text(
+                const Text(
                   'Female',
                   style: TextStyle(fontSize: 16),
                 ),
@@ -334,7 +334,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           Padding(
@@ -382,7 +382,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Padding(
@@ -406,14 +406,14 @@ class _SignUpPageState extends State<SignUpPage> {
                     signUp();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("Please fill the above details correctly"),
-                      duration: Duration(seconds: 2),
+                      content: const Text("Please fill the above details correctly"),
+                      duration: const Duration(seconds: 2),
                       backgroundColor: appbar,
                     ));
                   }
                 },
                 child: signing
-                    ? CircularProgressIndicator()
+                    ? const CircularProgressIndicator()
                     : const Text(
                         'Sign Up',
                         style: TextStyle(fontSize: 20),
@@ -423,12 +423,12 @@ class _SignUpPageState extends State<SignUpPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'Already have an account?',
                 style: TextStyle(fontSize: 15),
               ),
               TextButton(
-                child: Text(
+                child: const Text(
                   'Sign In',
                   style: TextStyle(fontSize: 18),
                 ),
@@ -436,13 +436,13 @@ class _SignUpPageState extends State<SignUpPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SignInPage(),
+                        builder: (context) => const SignInPage(),
                       ));
                 },
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 40,
           ),
         ],
@@ -474,11 +474,11 @@ class _SignUpPageState extends State<SignUpPage> {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SignInPage(),
+            builder: (context) => const SignInPage(),
           ));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Successfully Signed Up"),
-        duration: Duration(seconds: 2),
+        content: const Text("Successfully Signed Up"),
+        duration: const Duration(seconds: 2),
         backgroundColor: appbar,
       ));
       setState(() {
@@ -488,7 +488,7 @@ class _SignUpPageState extends State<SignUpPage> {
       setState(() {
         signing = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("Failed to Sign Up"),
         duration: Duration(seconds: 2),
         backgroundColor: Colors.red,

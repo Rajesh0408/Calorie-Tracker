@@ -46,7 +46,7 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Padding(
+          const Padding(
             padding: EdgeInsets.all(8.0),
             child: Center(
               child: Text(
@@ -58,7 +58,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ),
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.all(8.0),
             child: Center(
               child: Text(
@@ -70,14 +70,14 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ),
           ),
-          SizedBox(height: 10,),
+          const SizedBox(height: 10,),
           Padding(
             padding: const EdgeInsets.only(
                 left: 10.0, right: 25.0, top: 5, bottom: 5),
             child: TextField(
               controller: emailCon,
               decoration: InputDecoration(
-                icon: Icon(Icons.email),
+                icon: const Icon(Icons.email),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0)),
                 hintText: "Email",
@@ -91,7 +91,7 @@ class _SignInPageState extends State<SignInPage> {
               },
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Padding(
@@ -109,7 +109,7 @@ class _SignInPageState extends State<SignInPage> {
                       });
                     },
                   ),
-                icon: Icon(Icons.password),
+                icon: const Icon(Icons.password),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0)),
                 hintText: "Password",
@@ -124,7 +124,7 @@ class _SignInPageState extends State<SignInPage> {
               },
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           SizedBox(
@@ -136,12 +136,12 @@ class _SignInPageState extends State<SignInPage> {
                  } else {
                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                      content: const Text("Please fill the above details correctly"),
-                     duration: Duration(seconds: 2),
+                     duration: const Duration(seconds: 2),
                      backgroundColor: appbar,
                    ));
                  }
                 },
-                child: signing? CircularProgressIndicator():const Text(
+                child: signing? const CircularProgressIndicator():const Text(
                   'Sign In',
                   style: TextStyle(fontSize: 20),
                 )),
@@ -160,7 +160,7 @@ class _SignInPageState extends State<SignInPage> {
                   style: TextStyle(fontSize: 18),
                 ),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpPage(),));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpPage(),));
                 },
               ),
             ],
@@ -183,7 +183,7 @@ class _SignInPageState extends State<SignInPage> {
           ));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text("Successfully Signed In"),
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
         backgroundColor: appbar,
       ));
       setState(() {

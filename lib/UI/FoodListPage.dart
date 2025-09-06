@@ -122,19 +122,32 @@ class _FoodListPageState extends State<FoodListPage> {
       documentReferenceForCountList = FirebaseFirestore.instance
           .collection('UsersList')
           .doc(DocId);
+          
       DocumentSnapshot<Object?>? documentSnapshotForCountList =
           await documentReferenceForCountList?.get();
-      countList = documentSnapshotForCountList?.get('countList');
+    
+      // countList = documentSnapshotForCountList?.get('countList') ?? [];
+
+      if (documentSnapshotForCountList!=null) {
+        Map<String, dynamic>? data = documentSnapshotForCountList.data() as Map<String, dynamic>?;
+        countList = data?['countList'] ?? []; 
+      } else {
+        countList= [];
+      }
+      
 
       len = querySnapshot.docs.length;
-      if(countList.length==0) {
+      print("---------------------------------------len $len");
+      if(countList.isEmpty) {
         for(int i=0;i<len!;i++) {
           countList.add(0);
         }
       }
+      
       setState(() {
         isTodayNewDay();
         list = querySnapshot.docs.map((doc) => doc.data()).toList();
+        print('list ${list}');
       // FirebaseFirestore.instance
       //     .collection(
       //     'FoodsConsumedToday') // Replace 'your_collection' with your actual collection name
@@ -155,10 +168,10 @@ class _FoodListPageState extends State<FoodListPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: appbar,
-        title: Text('Calorie Tracker For Indian Food'),
+        title: const Text('Calorie Tracker For Indian Food'),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout, color: Colors.black,),
+            icon: const Icon(Icons.logout, color: Colors.black,),
             onPressed: () {
               _showLogoutDialog(context);
             },
@@ -168,12 +181,12 @@ class _FoodListPageState extends State<FoodListPage> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: SearchBar(
               controller: controller,
               hintText: 'Search...',
-              padding: MaterialStatePropertyAll<EdgeInsets>(
-                  EdgeInsets.symmetric(horizontal: 16.0)),
+              padding: WidgetStatePropertyAll<EdgeInsets>(
+                  const EdgeInsets.symmetric(horizontal: 16.0)),
               onTap: () {
                 setState(() {
                   //searchText = text.toString();
@@ -186,7 +199,7 @@ class _FoodListPageState extends State<FoodListPage> {
                   search(searchText);
                 });
               },
-              leading: Icon(Icons.search, ),
+              leading: const Icon(Icons.search, ),
               trailing: [IconButton(
                 icon: const Icon(Icons.clear),
                 onPressed: () {
@@ -212,7 +225,7 @@ class _FoodListPageState extends State<FoodListPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
                           height: 50,
                           width: 50,
@@ -220,7 +233,11 @@ class _FoodListPageState extends State<FoodListPage> {
                             tag: 'image$index',
                             child: Image.network(
                               "${foodData['image']}",
-                              fit: BoxFit.cover,
+                              fit: BoxFit.scaleDown,
+                              errorBuilder: (context, error, stackTrace) {
+                                print("Image load failed: $error");
+                                return const Icon(Icons.broken_image, size: 50);
+                              },
                             ),
                           )),
                     ),
@@ -418,8 +435,8 @@ class _FoodListPageState extends State<FoodListPage> {
         context: context,
         builder: (BuildContext) {
           return AlertDialog(
-            title: Text('Logout'),
-            content: Text('Are you sure you want to log out?'),
+            title: const Text('Logout'),
+            content: const Text('Are you sure you want to log out?'),
             actions: [
               TextButton(
                   onPressed: () {
@@ -435,7 +452,7 @@ class _FoodListPageState extends State<FoodListPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SignInPage(),
+                          builder: (context) => const SignInPage(),
                         ));
                   },
                   child: const Text('Logout')),

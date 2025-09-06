@@ -1,4 +1,4 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
@@ -58,11 +58,12 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appbar,
-        title: Text('Calorie Tracker For Indian Food'),
+        title: const Text('Calorie Tracker For Indian Food'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
-        child: Column(
+        child: SingleChildScrollView(
+          child: Column(
           children: [
             Container(
               decoration: BoxDecoration(
@@ -113,7 +114,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                             children: [
                               Text(
                                 '$totalCalories',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 40,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.green),
@@ -125,7 +126,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                               ),
                             ],
                           ),
-                          Text(
+                          const Text(
                             'Eaten',
                             style: TextStyle(fontSize: 20, color: Colors.green),
                           ),
@@ -155,7 +156,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                             children: [
                               Text(
                                 '$remainingCalories ',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 40,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.red),
@@ -167,7 +168,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                               ),
                             ],
                           ),
-                          Text(
+                          const Text(
                             'Remaining',
                             style: TextStyle(fontSize: 20, color: Colors.red),
                           ),
@@ -175,7 +176,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   Padding(
@@ -221,7 +222,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
               children: [
                 ElevatedButton(
                     style: const ButtonStyle(
-                      padding: MaterialStatePropertyAll(EdgeInsets.only(
+                      padding: WidgetStatePropertyAll(EdgeInsets.only(
                           left: 30, right: 30, top: 15, bottom: 15)),
                     ),
                     onPressed: () {
@@ -230,7 +231,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                     child: const Text('Recalculate')),
                 ElevatedButton(
                     style: const ButtonStyle(
-                      padding: MaterialStatePropertyAll(EdgeInsets.only(
+                      padding: WidgetStatePropertyAll(EdgeInsets.only(
                           left: 30, right: 30, top: 15, bottom: 15)),
                     ),
                     onPressed: () {
@@ -240,7 +241,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
               ],
             ),
           ],
-        ),
+        ),)
       ),
     );
   }
@@ -252,7 +253,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
           return Expanded(
             child: Column(
               children: [
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
                 const Center(child: Text("Foods Consumed Today", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)),
                 Flexible(
                   child: ListView.builder(
@@ -261,7 +262,7 @@ class _TotalCaloriesPageState extends State<TotalCaloriesPage> {
                       return Row(
                         children: [
                           Padding(
-                            padding: EdgeInsets.all(11.0),
+                            padding: const EdgeInsets.all(11.0),
                             child: SizedBox(
                                 height: 50,
                                 width: 50,
